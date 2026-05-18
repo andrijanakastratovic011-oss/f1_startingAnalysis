@@ -12,7 +12,6 @@ create table if not exists dimRace(
     quali_date date, quali_time TIME,
     sprint_date date, sprint_time TIME);
 
-
 create table if not exists dimDriver(
     driverId int PRIMARY KEY,
     driverRef varchar(255),
@@ -23,12 +22,10 @@ create table if not exists dimDriver(
     nationality varchar(255),
     url varchar(255));
 
-
 create table if not exists dimStatus(
     statusId int PRIMARY KEY,
     
     tatus varchar(255));
-
 
 create table if not exists dimDate (
     dateId int PRIMARY KEY, 
@@ -37,14 +34,12 @@ create table if not exists dimDate (
     month int, 
     day int);
 
-
 create table IF NOT EXISTS dimConstructor(
     constructorId int PRIMARY KEY,
     constructorRef varchar(255),
     name varchar(255),
     nationality_constructor varchar(255),
     url_constructor varchar(255));
-
 
 create table if not exists dimCircuit(
     circuitId int primary key,
@@ -57,7 +52,6 @@ create table if not exists dimCircuit(
     alt float, 
     url_y varchar(255));
 
-
 create table if not exists dimDriverStandings(
     driverStandingsId int primary key,
     points_driverStandings float, 
@@ -65,14 +59,12 @@ create table if not exists dimDriverStandings(
     positionText_driverStandings varchar(255),
     wins int);
 
-
 create table if not exists dimConstructorStandings(
     constructorStandingsId int primary key,
     points_constructorStandings float, 
     position_constructorStandings int, 
     positionText_constructorsStandings varchar(255),
     wins_constructors int);
-
 
 create table if not exists Fact(
     resultId int primary key,
@@ -106,7 +98,6 @@ create table if not exists Fact(
     CONSTRAINT fk_constructorStandings foreign key (constructorStandingsId) REFERENCES dimConstructorStandings(constructorStandingsId),
     CONSTRAINT fk_date foreign key (dateId) REFERENCES dimDate(dateId));
 
-
 create table if not exists FactLap(
     raceId int, 
     driverId int, 
@@ -117,7 +108,6 @@ create table if not exists FactLap(
     primary key (raceId, driverId), 
     CONSTRAINT fk_race foreign key (raceId) REFERENCES dimRace(raceId),
      CONSTRAINT fk_driver foreign key (driverId) REFERENCES dimDriver(driverId));
-
 
 create table if not exists FactPitStops(
     raceId int, 
