@@ -100,6 +100,53 @@ class DataCleaner:
             self.df[column]=pd.to_numeric(self.df[column], errors='coerce')
         return self
     
+    def standardize_time_zones(self, location:str, columns: list):
+        timezones = {
+    "Abu Dhabi": "+04:00",
+    "Al Daayen": "+03:00",
+    "Austin": "-06:00",
+    "Baku": "+04:00",
+    "Budapest": "+01:00",
+    "Hockenheim": "+01:00",
+    "Imola": "+01:00",
+    "Istanbul": "+03:00",
+    "Jeddah": "+03:00",
+    "Kuala Lumpur": "+08:00",
+    "Le Castellet": "+01:00",
+    "Marina Bay": "+08:00",
+    "Melbourne": "+10:00",
+    "Mexico City": "-06:00",
+    "Miami": "-05:00",
+    "Monte-Carlo": "+01:00",
+    "Montmeló": "+01:00",
+    "Montreal": "-05:00",
+    "Monza": "+01:00",
+    "Mugello": "+01:00",
+    "Nürburg": "+01:00",
+    "Portimão": "+00:00",
+    "Sakhir": "+03:00",
+    "São Paulo": "-03:00",
+    "Shanghai": "+08:00",
+    "Silverstone": "+00:00",
+    "Sochi": "+03:00",
+    "Spa": "+01:00",
+    "Spielberg": "+01:00",
+    "Suzuka": "+09:00",
+    "Uttar Pradesh": "+05:30",
+    "Valencia": "+01:00",
+    "Yeongam County": "+09:00",
+    "Zandvoort": "+01:00",
+}
+        for column in columns:
+            mask_plus=self.df[column].astype(str).str.startswith('+')
+            for city, timezone in timezones:
+                mask_city=self.df[location]==city
+                mask=mask_plus & mask_city
+                self.df.loc[mask, column]=timezone  
+            self.df[column] = self.df[column].dt.tz_convert('Europe/Berlin').dt.strftime('%H:%M:%S')
+
+        return self
+
     def standardize_time_columns(self, columns: list):
         for column in columns:
             t=self.df[column].str.split(':')
