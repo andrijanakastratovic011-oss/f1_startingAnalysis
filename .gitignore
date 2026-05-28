@@ -1,0 +1,6 @@
+﻿~$*.docx
+*.docx
+__pycache__
+.venv
+.env
+*.csv

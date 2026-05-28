@@ -55,7 +55,7 @@ create table if not exists dimCircuit(
 create table if not exists dimDriverStandings(
     driverStandingsId int primary key,
     points_driverStandings float, 
-    position_drivarStandings int, 
+    position_driverStandings int, 
     positionText_driverStandings varchar(255),
     wins int);
 
@@ -63,8 +63,8 @@ create table if not exists dimConstructorStandings(
     constructorStandingsId int primary key,
     points_constructorStandings float, 
     position_constructorStandings int, 
-    positionText_constructorsStandings varchar(255),
-    wins_constructors int);
+    positionText_constructorStandings varchar(255),
+    wins_constructorstandings int);
 
 create table if not exists Fact(
     resultId int primary key,
@@ -82,7 +82,7 @@ create table if not exists Fact(
     positionOrder int, 
     points float, 
     time time,
-    miliseconds float, 
+    milliseconds float, 
     laps int, 
     fastestLap int, 
     fastestLapTime interval, 
@@ -104,10 +104,10 @@ create table if not exists FactLap(
     lap int, 
     position_laptimes int, 
     time_laptimes time, 
-    miliseconds_laptimes int, 
-    primary key (raceId, driverId), 
-    CONSTRAINT fk_race foreign key (raceId) REFERENCES dimRace(raceId),
-     CONSTRAINT fk_driver foreign key (driverId) REFERENCES dimDriver(driverId));
+    milliseconds_laptimes int, 
+    primary key (raceId, driverId, lap), 
+    CONSTRAINT fk_race_lap foreign key (raceId) REFERENCES dimRace(raceId),
+     CONSTRAINT fk_driver_lap foreign key (driverId) REFERENCES dimDriver(driverId));
 
 create table if not exists FactPitStops(
     raceId int, 
@@ -116,7 +116,20 @@ create table if not exists FactPitStops(
     lap_pitstops int,
     time_pitstops time,
     duration interval, 
-    miliseconds_pitstop int, 
-    primary key (raceId, driverId),
-    CONSTRAINT fk_race foreign key (raceId) REFERENCES dimRace(raceId),
-    CONSTRAINT fk_driver foreign key (driverId) REFERENCES dimDriver(driverId));
+    milliseconds_pitstop int, 
+    primary key (raceId, driverId, stop),
+    CONSTRAINT fk_race_pitstops foreign key (raceId) REFERENCES dimRace(raceId),
+    CONSTRAINT fk_driver_pitstops foreign key (driverId) REFERENCES dimDriver(driverId));
+
+    alter table fact alter column fastestlaptime type time;
+    alter table fact alter column milliseconds type int;
+    alter table factpitstopst alter column duration type float;
+    alter table fact alter column time type varchar(255);
+    alter table FactLap alter column time_laptimes type varchar(255);
+    alter table FactPitStops alter column time_pitstops type varchar(255);
+    alter table FactLap alter column time_laptimes type varchar(255);
+    alter table dimRace alter column fp1_time type varchar(255);
+    alter table dimRace alter column fp2_time type varchar(255);
+    alter table dimRace alter column fp3_time type varchar(255);
+    alter table dimRace alter column quali_time type varchar(255);
+    alter table dimRace alter column sprint_time type varchar(255);
