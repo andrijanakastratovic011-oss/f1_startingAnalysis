@@ -1,4 +1,4 @@
-from load import load_dim_circuit, load_dim_constructor, load_dim_constructorstandings, load_dim_driver, load_dim_driverstandings, load_dim_race, load_dim_status, load_fact, load_fact_lap, load_fact_pitstops
+from load import load_dim_circuit, load_dim_constructor, load_dim_constructorstandings, load_dim_driver, load_dim_driverstandings, load_dim_race, load_dim_status, load_fact_results, load_fact_lap, load_fact_pitstops
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
@@ -43,7 +43,7 @@ def DataQualityChecksCircuit():
     print("Null vrijednosti po kolonama:")
     print(dim_circuit.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_circuit.dtype)
+    print(dim_circuit.dtypes)
           
 dim_driverstandings = load_dim_driverstandings(engine)
 def DataQualityChecksDriverStandings():
@@ -61,13 +61,13 @@ def DataQualityChecksConstructorStandings():
     print("Tipovi podataka po kolonama:")
     print(dim_constructorstandings.dtypes)
 
-fact = load_fact(engine)
-def DataQualityChecksFact():
-    print(f"Fact redovi: {len(fact)}")
+fact_results = load_fact_results(engine)
+def DataQualityChecksFactResults():
+    print(f"Fact redovi: {len(fact_results)}")
     print("Null vrijednosti po kolonama:")
-    print(fact.isnull().sum())
+    print(fact_results.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(fact.dtypes)
+    print(fact_results.dtypes)
 
 fact_lap = load_fact_lap(engine)
 def DataQualityChecksFactLap():
@@ -79,10 +79,19 @@ def DataQualityChecksFactLap():
 
 fact_pitstops = load_fact_pitstops(engine)
 def DataQualityChecksFactPitstops():
-    print(f"Fact_pitstops redovi: {len(fact)}")
+    print(f"Fact_pitstops redovi: {len(fact_pitstops)}")
     print("Null vrijednosti po kolonama:")
     print(fact_pitstops.isnull().sum())
     print("Tipovi podataka po kolonama:")
     print(fact_pitstops.dtypes)
 
-    
+DataQualityChecksCircuit()
+DataQualityChecksCircuit()
+DataQualityChecksConstructorStandings()
+DataQualityChecksDriver()
+DataQualityChecksDriverStandings()
+DataQualityChecksRace()
+DataQualityChecksStatus()
+DataQualityChecksFactResults()
+DataQualityChecksFactLap()
+DataQualityChecksFactPitstops()

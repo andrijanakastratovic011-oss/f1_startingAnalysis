@@ -12,3 +12,5 @@ def DataQualityChecks():
     print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
     print(df.dtypes)
+
+DataQualityChecks()

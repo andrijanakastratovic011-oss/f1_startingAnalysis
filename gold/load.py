@@ -2,11 +2,12 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from model import Base 
+from datetime import datetime
 load_dotenv()
 
 def load_dim_race(engine):
     Base.metadata.create_all(engine)
-    dim_race = pd.read_sql("SELECT 'raceId', year, round, date, time_races, url_x, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time FROM silver_layer", engine)
+    dim_race = pd.read_sql('SELECT DISTINCT "raceId", year, round, name_race, date, time_races, url_race, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_race CASCADE"))
         connection.commit()
@@ -15,7 +16,7 @@ def load_dim_race(engine):
 
 def load_dim_driver(engine):
     Base.metadata.create_all(engine)
-    dim_driver = pd.read_sql("SELECT 'driverId', 'driverRef', number_drivers, code, forename, surname, dob, nationality, url FROM silver_layer", engine)
+    dim_driver = pd.read_sql('SELECT DISTINCT "driverId", "driverRef", number_drivers, code, forename, surname, dob, nationality, url_driver FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_driver CASCADE"))
         connection.commit()
@@ -24,28 +25,33 @@ def load_dim_driver(engine):
 
 def load_dim_status(engine):
     Base.metadata.create_all(engine)
-    dim_status = pd.read_sql("SELECT 'statusId', status FROM silver_layer", engine)
+    dim_status = pd.read_sql('SELECT DISTINCT "statusId", status FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_status CASCADE"))
         connection.commit()
     dim_status.to_sql("dim_status", engine, if_exists='append', index=False)
     return dim_status
 
-def create_dim_date(start='2012-01-01', end='2023-12-31'):
+def load_dim_date(engine, start='2012-01-01', end='2023-12-31'):
     date_index = pd.date_range(start=start, end=end, freq='D')
 
     dim_date = pd.DataFrame({
-        'Date': date_index,
-        'Day': date_index.day_name(),          
-        'Month': date_index.month,
-        'Year': date_index.year,
+        'dateId': date_index.strftime('%Y%m%d'),
+        'date': date_index,
+        'day': date_index.day,          
+        'month': date_index.month,
+        'year': date_index.year,
     })
-    dim_date.index.name = 'date_id'
+    Base.metadata.create_all(engine)
+    with engine.connect() as connection:
+        connection.execute(text("TRUNCATE TABLE dim_date CASCADE"))
+        connection.commit()
+    dim_date.to_sql("dim_date", engine, if_exists='append', index=False)
     return dim_date
 
 def load_dim_constructor(engine):
     Base.metadata.create_all(engine)
-    dim_constructor = pd.read_sql("SELECT 'constructorId', 'constructorRef', name, nationality_constructors, url_constructors FROM silver_layer", engine)
+    dim_constructor = pd.read_sql('SELECT DISTINCT "constructorId", "constructorRef", name_constructors, nationality_constructors, url_constructors FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_constructor CASCADE"))
         connection.commit()
@@ -54,7 +60,7 @@ def load_dim_constructor(engine):
 
 def load_dim_circuit(engine):
     Base.metadata.create_all(engine)
-    dim_circuit = pd.read_sql("SELECT 'circuitId', 'circuitRef', name_y, location, country, lat, lng, alt, url_y FROM silver_layer", engine)
+    dim_circuit = pd.read_sql('SELECT DISTINCT "circuitId", "circuitRef", name_circuit, location, country, lat, lng, alt, url_circuit FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_circuit CASCADE"))
         connection.commit()
@@ -63,7 +69,7 @@ def load_dim_circuit(engine):
 
 def load_dim_driverstandings(engine):
     Base.metadata.create_all(engine)
-    dim_driverstandings = pd.read_sql("SELECT 'driverStandingsId', 'points_driverStandings', 'position_driverStandings', 'positionText_driverStandings', wins FROM silver_layer", engine)
+    dim_driverstandings = pd.read_sql('SELECT DISTINCT "driverStandingsId", points_driverstandings, position_driverstandings, "positionText_driverstandings", wins FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_driverstandings CASCADE"))
         connection.commit()
@@ -72,25 +78,25 @@ def load_dim_driverstandings(engine):
 
 def load_dim_constructorstandings(engine):
     Base.metadata.create_all(engine)
-    dim_constructorstandings = pd.read_sql("SELECT 'constructorStandingsId', points_constructorstandings, position_constructorstandings, 'positionText_constructorstandings', wins_constructorstandings FROM silver_layer", engine)
+    dim_constructorstandings = pd.read_sql('SELECT DISTINCT "constructorStandingsId", points_constructorstandings, position_constructorstandings, "positionText_constructorstandings", wins_constructorstandings FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE dim_constructorstandings CASCADE"))
         connection.commit()
     dim_constructorstandings.to_sql("dim_constructorstandings", engine, if_exists='append', index=False)
     return dim_constructorstandings
 
-def load_fact(engine):
+def load_fact_results(engine):
     Base.metadata.create_all(engine)
-    fact = pd.read_sql("SELECT 'resultId', 'raceId', 'driverId', 'constructorId', 'statusId', 'circuitId', 'driverStandingsId', 'constructorStandingsId', 'dateId', number, grid, position, 'positionText', 'positionOrder', points, time, milliseconds, laps, 'fastestLap', 'fastestLapTime', 'fastestLapSpeed', rank FROM silver_layer", engine)
+    fact_results = pd.read_sql('SELECT DISTINCT "resultId", "raceId", "driverId", "constructorId", "statusId", "circuitId", "driverStandingsId", "constructorStandingsId", number, grid, position, "positionText", "positionOrder", points, time, milliseconds, laps, "fastestLap", "fastestLapTime", "fastestLapSpeed", rank FROM silver_layer', engine)
     with engine.connect() as connection:
-        connection.execute(text("TRUNCATE TABLE fact"))
+        connection.execute(text("TRUNCATE TABLE fact_results"))
         connection.commit()
-    fact.to_sql("fact", engine, if_exists='append', index=False)
-    return fact
+    fact_results.to_sql("fact_results", engine, if_exists='append', index=False)
+    return fact_results
 
 def load_fact_lap(engine):
     Base.metadata.create_all(engine)
-    fact_lap = pd.read_sql("SELECT 'raceId', 'driverId', position_laptimes, time_laptimes, milliseconds_laptimes FROM silver_layer", engine)
+    fact_lap = pd.read_sql('SELECT DISTINCT "raceId", "driverId", lap ,position_laptimes, time_laptimes, milliseconds_laptimes FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE fact_lap"))
         connection.commit()
@@ -99,9 +105,9 @@ def load_fact_lap(engine):
 
 def load_fact_pitstops(engine):
     Base.metadata.create_all(engine)
-    fact_pitstops = pd.read_sql("SELECT 'raceId', 'driverId', stop, lap_pitstops, time_pitstops, duration, milliseconds_pitstops FROM silver_layer", engine)
+    fact_pitstops = pd.read_sql('SELECT DISTINCT "raceId", "driverId", stop, lap_pitstops, time_pitstops, duration, milliseconds_pitstops FROM silver_layer', engine)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE fact_pitstops"))
         connection.commit()
-    fact_pitstops.to_sql("fact", engine, if_exists='append', index=False)
+    fact_pitstops.to_sql("fact_pitstops", engine, if_exists='append', index=False)
     return fact_pitstops
