@@ -42,7 +42,6 @@ class Bronze(Base):
     points_constructorstandings=db.Column(db.String(200))
     position_constructorstandings=db.Column(db.String(200))
     wins_constructorstandings=db.Column(db.String(200))
-    positionText=db.Column(db.String(200))
     name=db.Column(db.String(200))
     name_x=db.Column(db.String(200))
     name_y=db.Column(db.String(200))

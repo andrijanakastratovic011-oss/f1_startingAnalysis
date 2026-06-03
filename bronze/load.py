@@ -1,13 +1,12 @@
 import pandas as pd
-from sqlalchemy import create_engine, text
-import os
+from sqlalchemy import text
 from dotenv import load_dotenv
-from model import Base, Bronze
+from model import Base
 
 load_dotenv()
-def load_bronze(engine):
+def load_bronze(csv_name,engine):
     Base.metadata.create_all(engine)
-    bronze_layer=pd.read_csv('dataEngineeringDataset.csv', low_memory=False)
+    bronze_layer=pd.read_csv(csv_name, low_memory=False)
     with engine.connect() as connection:
         connection.execute(text("TRUNCATE TABLE bronze_layer"))
         connection.commit()

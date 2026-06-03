@@ -2,6 +2,7 @@ import sqlalchemy as db
 import pandas as pd
 import validators
 from sqlalchemy.ext.declarative import declarative_base
+import numpy as np
 
 Base = declarative_base()
 
@@ -30,10 +31,10 @@ class Silver(Base):
     lng=db.Column(db.Float)
     alt=db.Column(db.Float)
     number_drivers=db.Column( db.Integer)
-    lap=db.Column("lap", db.Integer)
+    lap=db.Column(db.Integer)
     position_laptimes=db.Column(db.Integer)
     milliseconds_laptimes=db.Column(db.Integer)
-    lap_pitstops=db.Column("lap_pitstops", db.Integer)
+    lap_pitstops=db.Column( db.Integer)
     milliseconds_pitstops=db.Column(db.Integer)
     stop=db.Column(db.Integer)
     driverStandingsId=db.Column(db.Integer)
@@ -44,10 +45,9 @@ class Silver(Base):
     points_constructorstandings=db.Column(db.Float)
     position_constructorstandings=db.Column(db.Integer)
     wins_constructorstandings=db.Column(db.Integer)
-    positionText=db.Column(db.String(200))
-    name=db.Column(db.String(200))
-    name_x=db.Column(db.String(200))
-    name_y=db.Column(db.String(200))
+    name_constructors=db.Column(db.String(200))
+    name_race=db.Column(db.String(200))
+    name_cuircuit=db.Column(db.String(200))
     location=db.Column(db.String(200))
     country=db.Column(db.String(200))
     forename=db.Column(db.String(200))
@@ -69,9 +69,9 @@ class Silver(Base):
     sprint_time=db.Column( db.String(200))
     time_laptimes=db.Column( db.String(200))
     time_pitstops=db.Column(db.String(200))
-    url_x=db.Column(db.String(200))
-    url_y=db.Column(db.String(200))
-    url=db.Column(db.String(200))
+    url_race=db.Column(db.String(200))
+    url_circuit=db.Column(db.String(200))
+    url_constructors=db.Column(db.String(200))
     url_constructors=db.Column(db.String(200))
     circuitRef=db.Column(db.String(200))
     driverRef=db.Column(db.String(200))
@@ -90,6 +90,11 @@ class DataCleaner:
         df_copy=df.copy()
         self.df=df_copy
         self.name=name
+
+    def fix_nulls(self, columns: list):
+        self.df[columns] = self.df[columns].replace('\\N', np.nan)
+        return self
+
 
     def standardize_text_columns(self, columns: list):
         for column in columns:

@@ -3,14 +3,31 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-engine = create_engine(os.getenv("DATABASE_URL"))
-df = load_silver(engine)
-def DataQualityChecks():
+def dqc_silver():
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    df = load_silver(engine)
     print(f"Silver redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
     print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
     print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe is empty.")
+    if df.astype(str).eq('\\N').any().any():
+        raise ValueError("Data Quality Check Failed: There is '\\N' in dataframe.")
+    if ((df['year']>2023) | (df['year']<2012)).any():
+        raise ValueError("Data Quality Check Failed: Invalid year.")
+    point=['points', 'points_driverstandings', 'points_constructor_standings']
+    for p in point:
+        if (df[p]<0).any():
+            raise ValueError("Data Quality Check Failed: Invalid points.")
+    position=['position', 'position_driverstandings', 'position_constructor_standings']
+    for po in position:
+        if (df[po]<0).any():
+            raise ValueError("Data Quality Check Failed: Invalid position.")
+    if (df['grid']).any()<0:
+        raise ValueError("Data Quality Check Failed: Invalid grid.")
 
-DataQualityChecks()
+if __name__=='__main__':
+    dqc_silver()

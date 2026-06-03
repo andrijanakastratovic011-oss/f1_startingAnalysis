@@ -1,97 +1,154 @@
-from load import load_dim_circuit, load_dim_constructor, load_dim_constructorstandings, load_dim_driver, load_dim_driverstandings, load_dim_race, load_dim_status, load_fact_results, load_fact_lap, load_fact_pitstops
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
+import pandas as pd
 
 load_dotenv()
 engine = create_engine(os.getenv("DATABASE_URL"))
-dim_race = load_dim_race(engine)
-def DataQualityChecksRace():
-    print(f"Dim_race redovi: {len(dim_race)}")
-    print("Null vrijednosti po kolonama:")
-    print(dim_race.isnull().sum())
-    print("Tipovi podataka po kolonama:")
-    print(dim_race.dtypes)
 
-dim_driver = load_dim_driver(engine)
-def DataQualityChecksDriver():
-    print(f"Dim_driver redovi: {len(dim_driver)}")
+def DataQualityChecksRace(df, id):
+    print(f"Dim_race redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_driver.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_driver.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_race is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-dim_status = load_dim_status(engine)
-def DataQualityChecksStatus():
-    print(f"Dim_status redovi: {len(dim_status)}")
+def DataQualityChecksDriver(df, id):
+    print(f"Dim_driver redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_status.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_status.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_driver is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-dim_constructor = load_dim_constructor(engine)
-def DataQualityChecksConstructor():
-    print(f"Dim_constructor redovi: {len(dim_constructor)}")
+def DataQualityChecksStatus(df, id):
+    print(f"Dim_status redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_constructor.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_constructor.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_status is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-dim_circuit = load_dim_circuit(engine)
-def DataQualityChecksCircuit():
-    print(f"Dim_circuit redovi: {len(dim_circuit)}")
+def DataQualityChecksConstructor(df, id):
+    print(f"Dim_constructor redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_circuit.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_circuit.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_constructor is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
+
+def DataQualityChecksCircuit(df, id):
+    print(f"Dim_circuit redovi: {len(df)}")
+    print("Null vrijednosti po kolonama:")
+    print(df.isnull().sum())
+    print("Tipovi podataka po kolonama:")
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_circuit is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
           
-dim_driverstandings = load_dim_driverstandings(engine)
-def DataQualityChecksDriverStandings():
-    print(f"Dim_driverStandings redovi: {len(dim_driverstandings)}")
+def DataQualityChecksDriverStandings(df, id):
+    print(f"Dim_driverStandings redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_driverstandings.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_driverstandings.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_driverstandings is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-dim_constructorstandings = load_dim_constructorstandings(engine)
-def DataQualityChecksConstructorStandings():
-    print(f"Dim_constructorStandings redovi: {len(dim_constructorstandings)}")
+def DataQualityChecksConstructorStandings(df, id):
+    print(f"Dim_constructorStandings redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(dim_constructorstandings.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(dim_constructorstandings.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe dim_constructorstandings is empty.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-fact_results = load_fact_results(engine)
-def DataQualityChecksFactResults():
-    print(f"Fact redovi: {len(fact_results)}")
+def DataQualityChecksFactResults(df, id):
+    print(f"Fact redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(fact_results.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(fact_results.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe fact_result is empty.")
+    if (df['fastestLap']>df['laps']).any():
+        raise ValueError("Data Quality Check Failed: Invalid laps.")
+    if id!=len(df):
+        raise ValueError("Data Quality Check Failed: Some rows are lost.")
 
-fact_lap = load_fact_lap(engine)
-def DataQualityChecksFactLap():
-    print(f"Fact_lap redovi: {len(fact_lap)}")
+def DataQualityChecksFactLap(df):
+    print(f"Fact_lap redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(fact_lap.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(fact_lap.dtypes)   
+    print(df.dtypes) 
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe fact_lap is empty.")  
 
-fact_pitstops = load_fact_pitstops(engine)
-def DataQualityChecksFactPitstops():
-    print(f"Fact_pitstops redovi: {len(fact_pitstops)}")
+def DataQualityChecksFactPitstops(df):
+    print(f"Fact_pitstops redovi: {len(df)}")
     print("Null vrijednosti po kolonama:")
-    print(fact_pitstops.isnull().sum())
+    print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
-    print(fact_pitstops.dtypes)
+    print(df.dtypes)
+    if df.empty:
+        raise ValueError("Data Quality Check Failed: The dataframe fact_pitstops is empty.")
+    
+def DataQualityChecksRaceAndStandings(df1, df2, wins):
+    if df1[wins].sum()>df2['raceId'].count():
+        raise ValueError("Data Quality Check Failed: Invalid wins.")
 
-DataQualityChecksCircuit()
-DataQualityChecksCircuit()
-DataQualityChecksConstructorStandings()
-DataQualityChecksDriver()
-DataQualityChecksDriverStandings()
-DataQualityChecksRace()
-DataQualityChecksStatus()
-DataQualityChecksFactResults()
-DataQualityChecksFactLap()
-DataQualityChecksFactPitstops()
+def dqc_gold():
+    dim_race = pd.read_sql('SELECT * FROM dim_race', engine)
+    race_id_count=pd.read_sql('SELECT DISTINCT raceId from bronze_layer', engine)
+    dim_driver = pd.read_sql('SELECT * FROM dim_driver', engine)
+    driver_id_count=pd.read_sql('SELECT DISTINCT driverId from bronze_layer', engine)
+    dim_status = pd.read_sql('SELECT * FROM dim_status', engine)
+    status_id_count=pd.read_sql('SELECT DISTINCT statusId from bronze_layer', engine)
+    dim_constructor =pd.read_sql('SELECT * FROM dim_constructor', engine)
+    constructor_id_count=pd.read_sql('SELECT DISTINCT constructorId from bronze_layer', engine)
+    dim_circuit = pd.read_sql('SELECT * FROM dim_circuit', engine)
+    circuit_id_count=pd.read_sql('SELECT DISTINCT circuitId from bronze_layer', engine)
+    dim_driverstandings = pd.read_sql('SELECT * FROM dim_driverstandings', engine)
+    driverstandings_id_count=pd.read_sql('SELECT DISTINCT driverStandingsId from bronze_layer', engine)
+    dim_constructorstandings = pd.read_sql('SELECT * FROM dim_constructorstandings', engine)
+    constructorstendings_id_count=pd.read_sql('SELECT DISTINCT constructorStandingsId from bronze_layer', engine)
+    fact_results = pd.read_sql('SELECT * FROM fact_results', engine)
+    result_id_count=pd.read_sql('SELECT DISTINCT resultId from bronze_layer', engine)
+    fact_lap = pd.read_sql('SELECT * FROM fact_lap', engine)
+    fact_pitstops = pd.read_sql('SELECT * FROM fact_pitstops', engine)
+    DataQualityChecksCircuit(dim_circuit, circuit_id_count)
+    DataQualityChecksConstructor(dim_constructor, constructor_id_count)
+    DataQualityChecksConstructorStandings(dim_constructorstandings, constructorstendings_id_count)
+    DataQualityChecksDriver(dim_driver, driver_id_count)
+    DataQualityChecksDriverStandings(dim_driverstandings, driverstandings_id_count)
+    DataQualityChecksRace(dim_race, race_id_count)
+    DataQualityChecksStatus(dim_status, status_id_count)
+    DataQualityChecksFactResults(fact_results, result_id_count)
+    DataQualityChecksFactLap(fact_lap)
+    DataQualityChecksFactPitstops(fact_pitstops)
+    DataQualityChecksRaceAndStandings(dim_driverstandings, dim_race, 'wins')
+    DataQualityChecksRaceAndStandings(dim_constructorstandings, dim_race, 'wins_constructorstandings')
+
+if __name__=='__main__':
+    dqc_gold()

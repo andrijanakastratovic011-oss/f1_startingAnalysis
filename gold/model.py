@@ -3,6 +3,14 @@ from sqlalchemy.orm import declarative_base
 
 Base=declarative_base()
 
+class dim_date(Base):
+    __tablename__='dim_date'
+    dateId=db.Column(db.Integer, primary_key=True)
+    date=db.Column(db.Date)
+    year=db.Column(db.Integer)
+    month=db.Column(db.Integer)
+    day=db.Column(db.Integer)
+
 class dim_race(Base):
     __tablename__='dim_race'
     raceId=db.Column(db.Integer, primary_key=True)
@@ -22,6 +30,7 @@ class dim_race(Base):
     quali_time=db.Column(db.String(200))
     sprint_date=db.Column(db.Date)
     sprint_time=db.Column(db.String(200))
+    dateId=db.Column(db.String(200), db.ForeignKey(dim_date.dateId))
 
 
 class dim_driver(Base):
@@ -42,14 +51,6 @@ class dim_status(Base):
     statusId=db.Column(db.Integer, primary_key=True)
     status=db.Column(db.String(200))
 
-
-class dim_date(Base):
-    __tablename__='dim_date'
-    dateId=db.Column(db.Integer, primary_key=True)
-    date=db.Column(db.Date)
-    year=db.Column(db.Integer)
-    month=db.Column(db.Integer)
-    day=db.Column(db.Integer)
 
 
 class dim_constructor(Base):
@@ -113,7 +114,7 @@ class fact_results(Base):
     laps=db.Column(db.Integer)
     fastestLap=db.Column(db.Integer)
     fastestLapTime=db.Column(db.String(200))
-    fastestLapSpeed=db.Column(db.String(200))
+    fastestLapSpeed=db.Column(db.Float)
     rank=db.Column(db.Integer)
 
 

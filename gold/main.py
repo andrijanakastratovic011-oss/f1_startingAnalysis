@@ -2,19 +2,21 @@ from load import load_dim_race, load_dim_driver, load_dim_circuit, load_dim_cons
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
+from model import Base
 
 if __name__=="__main__":
     load_dotenv()
     engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
 
-    dim_race = load_dim_race(engine)
-    dim_driver=load_dim_driver(engine)
-    dim_status=load_dim_status(engine)
-    dim_date=load_dim_date(engine)
-    dim_constructor=load_dim_constructor(engine)
-    dim_circuit=load_dim_circuit(engine)
-    dim_driverstandings=load_dim_driverstandings(engine)
-    dim_constructorstandings=load_dim_constructorstandings(engine)
-    fact=load_fact_results(engine)
-    fact_lap=load_fact_lap(engine)
-    fact_pitstops=load_fact_pitstops(engine)
+    load_dim_race(engine)
+    load_dim_driver(engine)
+    load_dim_status(engine)
+    load_dim_date(engine)
+    load_dim_constructor(engine)
+    load_dim_circuit(engine)
+    load_dim_driverstandings(engine)
+    load_dim_constructorstandings(engine)
+    load_fact_results(engine)
+    load_fact_lap(engine)
+    load_fact_pitstops(engine)
