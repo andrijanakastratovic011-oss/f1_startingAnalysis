@@ -5,7 +5,7 @@ Base=declarative_base()
 
 class dim_date(Base):
     __tablename__='dim_date'
-    dateId=db.Column(db.Integer, primary_key=True)
+    dateId=db.Column(db.String(200), primary_key=True)
     date=db.Column(db.Date)
     year=db.Column(db.Integer)
     month=db.Column(db.Integer)
@@ -16,10 +16,10 @@ class dim_race(Base):
     raceId=db.Column(db.Integer, primary_key=True)
     year=db.Column(db.Integer)
     round=db.Column(db.Integer)
-    name_race=db.Column(db.String(200))
+    race_name=db.Column(db.String(200))
     date=db.Column(db.Date)
-    time_races=db.Column(db.String(200))
-    url_race=db.Column(db.String(200))
+    races_time=db.Column(db.String(200))
+    race_url=db.Column(db.String(200))
     fp1_date=db.Column(db.Date)
     fp1_time=db.Column(db.String(200))
     fp2_date=db.Column(db.Date)
@@ -37,13 +37,13 @@ class dim_driver(Base):
     __tablename__='dim_driver'
     driverId=db.Column(db.Integer, primary_key=True)
     driverRef=db.Column(db.String(200))
-    number_drivers=db.Column(db.Integer)
+    drivers_number=db.Column(db.Integer)
     code=db.Column(db.String(200))
     forename=db.Column(db.String(200))
     surname=db.Column(db.String(200))
     dob=db.Column(db.Date)
-    nationality=db.Column(db.String(200))
-    url_driver=db.Column(db.String(200))
+    driver_nationality=db.Column(db.String(200))
+    driver_url=db.Column(db.String(200))
 
 
 class dim_status(Base):
@@ -57,40 +57,40 @@ class dim_constructor(Base):
     __tablename__='dim_constructor'
     constructorId=db.Column(db.Integer, primary_key=True)
     constructorRef=db.Column(db.String(200))
-    name_constructors=db.Column(db.String(200))
-    nationality_constructors=db.Column(db.String(200))
-    url_constructors=db.Column(db.String(200))
+    constructors_name=db.Column(db.String(200))
+    constructors_nationality=db.Column(db.String(200))
+    constructors_url=db.Column(db.String(200))
 
 
 class dim_circuit(Base):
     __tablename__='dim_circuit'
     circuitId=db.Column(db.Integer, primary_key=True)
     circuitRef=db.Column(db.String(200))
-    name_circuit=db.Column(db.String(200))
+    circuit_name=db.Column(db.String(200))
     location=db.Column(db.String(200))
     country=db.Column(db.String(200))
     lat=db.Column(db.Float)
     lng=db.Column(db.Float)
     alt=db.Column(db.Float)
-    url_circuit=db.Column(db.String(200))
+    circuit_url=db.Column(db.String(200))
 
 
 class dim_driverstandings(Base):
     __tablename__='dim_driverstandings'
     driverStandingsId=db.Column(db.Integer, primary_key=True)
-    points_driverstandings=db.Column(db.Float)
-    position_driverstandings=db.Column(db.Integer)
-    positionText_driverstandings=db.Column(db.String(200))
-    wins=db.Column(db.Integer)
+    driverstandings_points=db.Column(db.Float)
+    driverstandings_position=db.Column(db.Integer)
+    driverstandings_positionText=db.Column(db.String(200))
+    driverstandings_wins=db.Column(db.Integer)
 
 
 class dim_constructorstandings(Base):
     __tablename__='dim_constructorstandings'
     constructorStandingsId=db.Column(db.Integer, primary_key=True)
-    points_constructorstandings=db.Column(db.Float)
-    position_constructorstandings=db.Column(db.Integer)
-    positionText_constructorstandings=db.Column(db.String)
-    wins_constructorstandings=db.Column(db.Integer)
+    constructorstandings_points=db.Column(db.Float)
+    constructorstandings_position=db.Column(db.Integer)
+    constructorstandings_positionText=db.Column(db.String)
+    constructorstandings_wins=db.Column(db.Integer)
 
 
 class fact_results(Base):
@@ -123,9 +123,9 @@ class fact_lap(Base):
     raceId=db.Column(db.Integer,  db.ForeignKey('dim_race.raceId'), primary_key=True)
     driverId=db.Column(db.Integer, db.ForeignKey('dim_driver.driverId'), primary_key=True)
     lap=db.Column(db.Integer, primary_key=True)
-    position_laptimes=db.Column(db.Integer)
-    time_laptimes=db.Column(db.String(200))
-    milliseconds_laptimes=db.Column(db.Integer)
+    laptimes_position=db.Column(db.Integer)
+    laptimes_time=db.Column(db.String(200))
+    laptimes_milliseconds=db.Column(db.Integer)
 
 
 class fact_pitstops(Base):
@@ -133,7 +133,7 @@ class fact_pitstops(Base):
     raceId=db.Column(db.Integer,  db.ForeignKey('dim_race.raceId'), primary_key=True)
     driverId=db.Column(db.Integer, db.ForeignKey('dim_driver.driverId'), primary_key=True)
     stop=db.Column(db.Integer, primary_key=True)
-    lap_pitstops=db.Column(db.Integer)
-    time_pitstops=db.Column(db.String(200))
+    pitstops_lap=db.Column(db.Integer)
+    pitstops_time=db.Column(db.String(200))
     duration=db.Column(db.Float)
-    milliseconds_pitstops=db.Column(db.Integer)
+    pitstops_milliseconds=db.Column(db.Integer)

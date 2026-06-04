@@ -1,4 +1,4 @@
-from load import load_silver
+import pandas as pd
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
@@ -6,8 +6,11 @@ import os
 def dqc_silver():
     load_dotenv()
     engine = create_engine(os.getenv("DATABASE_URL"))
-    df = load_silver(engine)
+    df = pd.read_sql('SELECT * FROM silver_layer', engine)
+    br=pd.read_sql('select * from bronze_layer', engine)
     print(f"Silver redovi: {len(df)}")
+    if len(df)!=len(br):
+        raise ValueError("Data Quality Check Failf: Some rows are lost.")
     print("Null vrijednosti po kolonama:")
     print(df.isnull().sum())
     print("Tipovi podataka po kolonama:")
@@ -18,11 +21,11 @@ def dqc_silver():
         raise ValueError("Data Quality Check Failed: There is '\\N' in dataframe.")
     if ((df['year']>2023) | (df['year']<2012)).any():
         raise ValueError("Data Quality Check Failed: Invalid year.")
-    point=['points', 'points_driverstandings', 'points_constructor_standings']
+    point=['points', 'points_driverstandings', 'points_constructorstandings']
     for p in point:
         if (df[p]<0).any():
             raise ValueError("Data Quality Check Failed: Invalid points.")
-    position=['position', 'position_driverstandings', 'position_constructor_standings']
+    position=['position', 'position_driverstandings', 'position_constructorstandings']
     for po in position:
         if (df[po]<0).any():
             raise ValueError("Data Quality Check Failed: Invalid position.")

@@ -9,10 +9,10 @@ if __name__=="__main__":
     engine = create_engine(os.getenv("DATABASE_URL"))
     Base.metadata.create_all(engine)
 
+    load_dim_date(engine)
     load_dim_race(engine)
     load_dim_driver(engine)
     load_dim_status(engine)
-    load_dim_date(engine)
     load_dim_constructor(engine)
     load_dim_circuit(engine)
     load_dim_driverstandings(engine)
