@@ -1,22 +1,125 @@
 from datetime import datetime
+import os
+from sqlalchemy import create_engine
+from dotenv import load_dotenv
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
-from bronze.load import load_bronze
-from silver.load import load_silver
-from silver.dqc import dqc_silver
-from gold.load import load_dim_date
-from gold.load import load_dim_race
-from gold.load import load_dim_driver
-from gold.load import load_dim_constructor
-from gold.load import load_dim_circuit
-from gold.load import load_dim_status
-from gold.load import load_dim_driverstandings
-from gold.load import load_dim_constructorstandings
-from gold.load import load_fact_results
-from gold.load import load_fact_lap
-from gold.load import load_fact_pitstops
-from gold.dqc import dqc_gold
+import sys
+sys.path.append("/opt/airflow")
+
+def run_load_bronze():
+    from bronze.load import load_bronze
+    load_dotenv()
+    csv_name=os.getenv("CSV_NAME")
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    load_bronze(csv_name, engine)
+
+def run_load_silver():
+    from silver.load import load_silver
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    load_silver(engine)
+
+def run_dqc_silver():
+    from silver.dqc import dqc_silver
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    dqc_silver()
+
+def run_load_dim_race():
+    from gold.load import load_dim_race
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_race(engine)
+    
+def run_load_dim_driver():
+    from gold.load import load_dim_driver
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_driver(engine)
+
+def run_load_dim_constructor():
+    from gold.load import load_dim_constructor
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_constructor(engine)
+
+def run_load_dim_circuit():
+    from gold.load import load_dim_circuit
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_circuit(engine)
+
+def run_load_dim_status():
+    from gold.load import load_dim_status
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_status(engine)
+
+def run_load_dim_driverstandings():
+    from gold.load import load_dim_driverstandings
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_driverstandings(engine)
+
+def run_load_dim_constructorstandings():
+    from gold.load import load_dim_constructorstandings
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_constructorstandings(engine)
+
+def run_load_dim_date():
+    from gold.load import load_dim_date
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_dim_date(engine)
+
+def run_load_fact_results():
+    from gold.load import load_fact_results
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_fact_results(engine)
+
+def run_load_fact_lap():
+    from gold.load import load_fact_lap
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_fact_lap(engine)   
+
+def run_load_fact_pitstops():
+    from gold.load import load_fact_pitstops
+    from gold.model import Base
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    Base.metadata.create_all(engine)
+    load_fact_pitstops(engine)
+
+def run_dqc_gold():
+    from gold.dqc import dqc_gold
+    load_dotenv()
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    dqc_gold()
 
 default_args = {
     'owner': 'airflow',
@@ -33,21 +136,21 @@ with DAG(
     start = EmptyOperator(task_id="start_pipeline")
     
     # Docker mapira tvoje foldere u /opt/airflow/, zato koristimo ove Linux putanje:
-    task_load_bronze = PythonOperator(task_id='load_bronze', python_callable=load_bronze)
-    task_load_silver = PythonOperator(task_id='load_silver', python_callable=load_silver)
-    task_dqc_silver = PythonOperator(task_id='dqc_silver', python_callable=dqc_silver)
-    task_load_dim_date=PythonOperator(task_id='load_dim_date', python_callable=load_dim_date)
-    task_load_dim_race = PythonOperator(task_id='load_dim_race', python_callable=load_dim_race)
-    task_load_dim_driver = PythonOperator(task_id='load_dim_driver', python_callable=load_dim_driver)
-    task_load_dim_constructor = PythonOperator(task_id='load_dim_constructor', python_callable=load_dim_constructor)
-    task_load_dim_circuit = PythonOperator(task_id='load_dim_circuit', python_callable=load_dim_circuit)
-    task_load_dim_status = PythonOperator(task_id='load_dim_satus', python_callable=load_dim_status)
-    task_load_dim_constructorstandings = PythonOperator(task_id='load_dim_constructorstandings', python_callable=load_dim_constructorstandings)
-    task_load_dim_driverstandings = PythonOperator(task_id='load_dim_driverstandings', python_callable=load_dim_driverstandings)
-    task_load_fact_results = PythonOperator(task_id='load_fact_results', python_callable=load_fact_results)
-    task_load_fact_lap = PythonOperator(task_id='load_fact_lap', python_callable=load_fact_lap)
-    task_load_fact_pitstops = PythonOperator(task_id='load_fact_pitstops', python_callable=load_fact_pitstops)
-    task_dqc_gold = PythonOperator(task_id='dqc_gold', python_callable=dqc_gold)
+    task_load_bronze = PythonOperator(task_id='load_bronze', python_callable=run_load_bronze)
+    task_load_silver = PythonOperator(task_id='load_silver', python_callable=run_load_silver)
+    task_dqc_silver = PythonOperator(task_id='dqc_silver', python_callable=run_dqc_silver)
+    task_load_dim_date=PythonOperator(task_id='load_dim_date', python_callable=run_load_dim_date)
+    task_load_dim_race = PythonOperator(task_id='load_dim_race', python_callable=run_load_dim_race)
+    task_load_dim_driver = PythonOperator(task_id='load_dim_driver', python_callable=run_load_dim_driver)
+    task_load_dim_constructor = PythonOperator(task_id='load_dim_constructor', python_callable=run_load_dim_constructor)
+    task_load_dim_circuit = PythonOperator(task_id='load_dim_circuit', python_callable=run_load_dim_circuit)
+    task_load_dim_status = PythonOperator(task_id='load_dim_satus', python_callable=run_load_dim_status)
+    task_load_dim_constructorstandings = PythonOperator(task_id='load_dim_constructorstandings', python_callable=run_load_dim_constructorstandings)
+    task_load_dim_driverstandings = PythonOperator(task_id='load_dim_driverstandings', python_callable=run_load_dim_driverstandings)
+    task_load_fact_results = PythonOperator(task_id='load_fact_results', python_callable=run_load_fact_results)
+    task_load_fact_lap = PythonOperator(task_id='load_fact_lap', python_callable=run_load_fact_lap)
+    task_load_fact_pitstops = PythonOperator(task_id='load_fact_pitstops', python_callable=run_load_fact_pitstops)
+    task_dqc_gold = PythonOperator(task_id='dqc_gold', python_callable=run_dqc_gold)
     
     end = EmptyOperator(task_id="end_pipeline")
 

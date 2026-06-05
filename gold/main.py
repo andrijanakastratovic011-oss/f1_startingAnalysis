@@ -2,7 +2,7 @@ from load import load_dim_race, load_dim_driver, load_dim_circuit, load_dim_cons
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
-from model import Base
+from gold.model import Base
 
 if __name__=="__main__":
     load_dotenv()

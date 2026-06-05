@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy import text
 from dotenv import load_dotenv
-from model import Base
+from bronze.model import Base
 
 load_dotenv()
 def load_bronze(csv_name,engine):

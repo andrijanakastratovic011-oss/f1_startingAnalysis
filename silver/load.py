@@ -1,4 +1,4 @@
-from model import Base, DataCleaner
+from silver.model import Base, DataCleaner
 import pandas as pd
 from sqlalchemy import text
 
