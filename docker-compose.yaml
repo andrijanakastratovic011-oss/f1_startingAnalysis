@@ -24,8 +24,7 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      # AUTOMATSKA INSTALACIJA BIBLIOTEKA ZA TVOJE SKRIPTE:
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy python-dotenv validators numpy psycopg2-binary"
     ports:
       - "8081:8080"
     volumes:
@@ -47,8 +46,7 @@ services:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      # ISTO I ZA SCHEDULER (JER ON IZVRŠAVA TASKOVE):
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas~=3.0.3 sqlalchemy~=1.4 python-dotenv~=0.9.9 validators~=0.35.0 numpy~=2.4.6 psycopg2-binary~=2.9.12"
+      _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy python-dotenv validators numpy psycopg2-binary"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs

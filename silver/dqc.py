@@ -6,8 +6,9 @@ import os
 def dqc_silver():
     load_dotenv()
     engine = create_engine(os.getenv("DATABASE_URL"))
-    df = pd.read_sql('SELECT * FROM silver_layer', engine)
-    br=pd.read_sql('select * from bronze_layer', engine)
+    with engine.begin() as conn:
+        df = pd.read_sql('SELECT * FROM silver_layer', conn)
+        br=pd.read_sql('select * from bronze_layer', conn)
     print(f"Silver redovi: {len(df)}")
     if len(df)!=len(br):
         raise ValueError("Data Quality Check Failf: Some rows are lost.")
@@ -21,11 +22,11 @@ def dqc_silver():
         raise ValueError("Data Quality Check Failed: There is '\\N' in dataframe.")
     if ((df['year']>2023) | (df['year']<2012)).any():
         raise ValueError("Data Quality Check Failed: Invalid year.")
-    point=['points', 'points_driverstandings', 'points_constructorstandings']
+    point=['points', 'driverstandings_points', 'constructorstandings_points']
     for p in point:
         if (df[p]<0).any():
             raise ValueError("Data Quality Check Failed: Invalid points.")
-    position=['position', 'position_driverstandings', 'position_constructorstandings']
+    position=['position', 'driverstandings_position', 'constructorstandings_position']
     for po in position:
         if (df[po]<0).any():
             raise ValueError("Data Quality Check Failed: Invalid position.")

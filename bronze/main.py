@@ -7,5 +7,5 @@ if __name__=="__main__":
     load_dotenv()
     csv_name=os.getenv("CSV_NAME")
     engine = create_engine(os.getenv("DATABASE_URL"))
-    df = load_bronze(csv_name, engine)
-    print(f"Bronze učitano: {len(df)} redova")
+    with engine.begin() as conn:
+        load_bronze(csv_name, conn)
