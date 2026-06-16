@@ -1,0 +1,9 @@
+﻿~$*.docx
+*.docx
+__pycache__
+.venv
+.env
+*.csv
+.vscode
+logs/
+wsl_env/
